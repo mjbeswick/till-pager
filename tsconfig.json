@@ -5,10 +5,12 @@
     "jsx": "react",
     "outDir": "./out",
     "rootDir": "./src",
+    "lib":["es2017", "dom"],
     /* Default flags */
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
   }
 }

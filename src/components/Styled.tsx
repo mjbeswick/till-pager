@@ -4,10 +4,11 @@ import { Color } from '../constants';
 
 export const ViewHeader = styled.div`
   font-size: 1rem;
-  margin: 0.5rem 1rem;
+  padding: 0.5rem 1rem;
   fill: ${Color.white};
   display: flex;
   justify-content: space-between;
+  border-bottom: 1px solid ${Color.midGrey};
 `;
 
 export const ViewBody = styled.div<{ dark?: boolean }>`
@@ -22,9 +23,7 @@ export const ViewFooter = styled.div<{ show?: boolean }>`
   color: ${Color.body};
   display: flex;
   flex-direction: row;
-  padding: 1rem;
-  column-gap: 1rem;
-  row-gap: 1rem;
+  justify-content: center;
   display: ${({ show = true }) => (show ? 'flex' : 'none')};
 `;
 

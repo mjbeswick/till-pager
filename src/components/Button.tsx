@@ -10,7 +10,6 @@ const StyledButton = styled.button<{
   font-size: inherit;
   border: 1px solid #ccc;
   padding: 0.5rem 1rem;
-  /* margin: 0.5rem 1rem; */
   background: #eee;
   border-radius: 100px;
   flex-grow: 1;
@@ -36,6 +35,7 @@ const StyledButton = styled.button<{
     }
   }};
   opacity: ${({ disabled }) => (disabled ? 0.2 : 1)};
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 `;
 
 export const Button: FC<

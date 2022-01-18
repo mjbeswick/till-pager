@@ -1,11 +1,22 @@
 import styled from '@emotion/styled';
-import React, { FC, Fragment, useEffect, useState } from 'react';
-import { Button } from '../components/Button';
-import { ViewBody, ViewFooter, ViewHeader } from '../components/Styled';
+import React, {
+  ChangeEventHandler,
+  FC,
+  Fragment,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import { ToggleMute } from '../components/ToggleMute';
-import { NotificationType } from '../partials/NotificationPanel';
-import { notificationsNode } from '../App';
+import { NotificationTitle } from '../partials/NotificationListItem';
 import { Select } from '../components/Select';
+import { ViewBody, ViewFooter, ViewHeader } from '../components/Styled';
+import { Button } from '../components/Button';
+import { Notification } from './Notifications';
+import { nanoid } from 'nanoid';
+import { PushToTalkButton } from '../partials/PushToTalkButton';
+import { gunDB } from '../lib/gun';
 
 const ButtonsContainer = styled.div`
   display: grid;
@@ -23,64 +34,58 @@ const LaneContainer = styled.div`
   font-size: 1.5rem;
 `;
 
-interface NotificationTypeButtonProps {
-  type: keyof typeof NotificationType;
-  text: string;
-  lane: number;
-}
+const laneOptions = Array(30)
+  .fill(null)
+  .reduce((o, x, i) => {
+    i += 1;
+    o[i] = 'Lane ' + i;
+    return o;
+  }, {});
 
-const NotificationTypeButton: FC<NotificationTypeButtonProps> = ({
-  lane,
-  type,
-  text,
-}) => {
-  const [active, setActive] = useState(false);
+export const Buttons: FC = () => {
+  const [lane, setLane] = useState(1);
+  const activeRef = useRef<{ [k: string]: Notification }>({});
+  const { current: active } = activeRef;
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
-  const addNotification = (
-    lane: number,
-    type: keyof typeof NotificationType
-  ) => {
-    notificationsNode.get(lane + '-' + type).put({
-      time: Date.now(),
-      lane,
-      type,
-    });
-  };
-
-  const removeNotification = (
-    lane: number,
-    type: keyof typeof NotificationType
-  ) => {
-    notificationsNode.get(lane + '-' + type).put(null as any);
-  };
-
-  const toggle = (lane: number, type: keyof typeof NotificationType) => {
-    if (active) {
-      removeNotification(lane, type);
-    } else {
-      addNotification(lane, type);
-    }
+  const laneChange: ChangeEventHandler<HTMLSelectElement> = (e) => {
+    setLane(parseInt(e.currentTarget.value));
   };
 
   useEffect(() => {
-    notificationsNode.get(lane + '-' + type).on((data, key) => {
-      if (data) {
-        setActive(true);
-      } else {
-        setActive(false);
+    gunDB.get('notifications').map((data: Notification, key: string) => {
+      if (data?.lane === lane) {
+        active[key] = data;
+      } else if (active[key]) {
+        delete active[key];
       }
+      forceUpdate();
     });
   }, [lane]);
 
-  return (
-    <Button color="blue" outline={!active} onClick={() => toggle(lane, type)}>
-      {text}
-    </Button>
-  );
-};
+  const toggle = (lane: number, type: string, id?: string) => {
+    if (id && active[id]) {
+      const node = gunDB.get('notifications').get(id);
 
-export const Buttons: FC = () => {
-  const [lane, setLane] = useState(0);
+      (gunDB.get('notifications') as any).unset(node);
+
+      gunDB
+        .get(lane)
+        .get(id)
+        .put(null as any);
+    } else {
+      const id = nanoid();
+
+      const node = gunDB.get(lane).get(id).put({
+        id: nanoid(),
+        time: Date.now(),
+        lane,
+        type,
+      });
+
+      gunDB.get('notifications').set(node);
+    }
+  };
 
   return (
     <Fragment>
@@ -90,29 +95,28 @@ export const Buttons: FC = () => {
       </ViewHeader>
       <ViewBody>
         <LaneContainer>
-          <Select
-            value={lane}
-            onChange={(e) => setLane(parseInt(e.currentTarget.value))}
-            options={Array(10)
-              .fill(null)
-              .reduce((o, x, i) => {
-                i++;
-                o[i] = 'Lane ' + i;
-                return o;
-              }, {})}
-          />
+          <Select value={lane} onChange={laneChange} options={laneOptions} />
         </LaneContainer>
         <ButtonsContainer>
-          {Object.entries(NotificationType).map(([key, value]) => (
-            <NotificationTypeButton
-              key={key}
-              text={value}
-              type={key}
-              lane={lane}
-            />
-          ))}
+          {Object.entries(NotificationTitle).map(([type, value]) => {
+            const [id] =
+              Object.entries(active).find(([k, x]) => x.type === type) ?? [];
+            return (
+              <Button
+                key={type}
+                color="blue"
+                outline={!id}
+                onClick={() => toggle(lane, type, id)}
+              >
+                {value}
+              </Button>
+            );
+          })}
         </ButtonsContainer>
       </ViewBody>
+      <ViewFooter>
+        <PushToTalkButton />
+      </ViewFooter>
     </Fragment>
   );
 };

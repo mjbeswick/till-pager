@@ -1,34 +1,30 @@
-import React, { Fragment, MouseEventHandler, useEffect, useState } from 'react';
-import { gun, notificationsNode } from '../App';
-import { Button } from '../components/Button';
-import { Modal } from '../components/Modal';
-import { ViewBody, ViewHeader } from '../components/Styled';
+import React, {
+  FC,
+  Fragment,
+  MouseEventHandler,
+  useEffect,
+  useState,
+} from 'react';
+import { ViewBody, ViewFooter, ViewHeader } from '../components/Styled';
 import { ToggleMute } from '../components/ToggleMute';
+import { gunDB } from '../lib/gun';
+import { NotificationActionModal } from '../partials/NotificationActionModal';
 import {
-  NotificationPanel,
+  NotificationListItem,
+  NotificationTitle,
   NotificationType,
-} from '../partials/NotificationPanel';
+} from '../partials/NotificationListItem';
+import { PushToTalkButton } from '../partials/PushToTalkButton';
 
-interface Notification {
+export interface Notification {
   id: string;
   lane: number;
-  type: keyof typeof NotificationType;
+  type: NotificationType;
   time: number;
 }
 
-const notificationTypes = [
-  'packing',
-  'change',
-  'security',
-  'price',
-  'product',
-  'bags',
-  'cleanup',
-  'supervisor',
-];
-
-export const Notifications = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+export const Notifications: FC = () => {
+  const [list, setList] = useState<{ [k: string]: Notification }>({});
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const cancel: MouseEventHandler<HTMLButtonElement> = () => {
@@ -36,60 +32,59 @@ export const Notifications = () => {
   };
 
   const done: MouseEventHandler<HTMLButtonElement> = () => {
-    notificationsNode.get(selectedId!).put(null as any);
-    // setNotifications(notifications.filter((x) => x.id !== selected));
+    gunDB
+      .get('notifications')
+      .get(selectedId!)
+      .put(null as any);
+
     setSelectedId(null);
   };
 
   useEffect(() => {
-    let notificationsUpdated: Notification[] = [];
-
-    notificationsNode.map((notification, id) => {
-      console.log(notification, id);
-
-      notificationsUpdated = notificationsUpdated.filter((x) => {
-        return x.id !== id;
-      });
+    gunDB.get('notifications').map((notification, id) => {
+      console.log(notification);
 
       if (notification) {
-        notificationsUpdated.push({
-          id: notification.lane + '-' + notification.type,
-          lane: notification.lane,
-          type: notification.type,
-          time: notification.time,
-        });
+        console.log('new notification', notification, id);
 
-        // const title = NotificationType[notification.type];
-        // const message = `Lane ${notification.lane}, ${title}`;
-        // var utterance = new SpeechSynthesisUtterance(message);
-        // speechSynthesis.speak(utterance);
+        list[id] = notification;
+        setList({ ...list });
+      } else {
+        console.log('notification already exists');
+
+        delete list[id];
+        setList({ ...list });
       }
-
-      notificationsUpdated.sort((a, b) => a.time - b.time);
-
-      setNotifications(notificationsUpdated);
     });
   }, []);
 
+  const [selectedItem, setSelectedItem] = useState({} as Notification);
+
+  useEffect(() => {
+    if (selectedId) {
+      setSelectedItem(list[selectedId]);
+    }
+  }, [selectedId]);
+
   return (
     <Fragment>
-      <Modal show={!!selectedId}>
-        <Button color="blue" outline onClick={cancel}>
-          Cancel
-        </Button>
-        <Button color="blue" onClick={done}>
-          Done
-        </Button>
-      </Modal>
+      <NotificationActionModal
+        notification={selectedItem}
+        cancel={cancel}
+        done={done}
+        show={!!selectedId}
+      ></NotificationActionModal>
       <ViewHeader>
         <span>Notifications</span>
         {selectedId}
         <ToggleMute />
       </ViewHeader>
       <ViewBody dark>
-        {notifications.map(({ id, lane, type, time }) => {
+        {Object.entries(list).map(([id, notification]) => {
+          const { lane, type, time } = notification;
+
           return (
-            <NotificationPanel
+            <NotificationListItem
               key={id}
               lane={lane}
               type={type}
@@ -101,6 +96,9 @@ export const Notifications = () => {
           );
         })}
       </ViewBody>
+      <ViewFooter>
+        <PushToTalkButton />
+      </ViewFooter>
     </Fragment>
   );
 };

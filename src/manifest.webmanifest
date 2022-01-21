@@ -1,0 +1,37 @@
+{
+  "name": "Tesco Till Pager POC",
+  "short_name": "Till Pager",
+  "theme_color": "#00539f",
+  "background_color": "#00539f",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/notifications",
+  "icons": [
+    {
+      "src": "public/favicon.ico",
+      "type": "image/x-icon",
+      "sizes": "64x64 32x32 24x24 16x16"
+    },
+    {
+      "src": "public/logo16.png",
+      "type": "image/png",
+      "sizes": "16x16"
+    },
+    {
+      "src": "public/logo32.png",
+      "type": "image/png",
+      "sizes": "32x32"
+    },
+    {
+      "src": "public/logo64.png",
+      "type": "image/png",
+      "sizes": "64x64"
+    },
+    {
+      "src": "public/logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ]
+}

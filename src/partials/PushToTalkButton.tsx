@@ -15,6 +15,7 @@ import MicRecorder from 'mic-recorder-to-mp3';
 import { gunDB } from '../lib/gun';
 import { nanoid } from 'nanoid';
 import { useDebouncedCallback } from 'use-debounce';
+import { Speaker } from '../components/Speaker';
 
 const recorder = new MicRecorder({
   bitRate: 64,
@@ -38,8 +39,10 @@ const TalkButton = styled.div<{ active: boolean }>`
 export const PushToTalkButton: FC = () => {
   const [isTalking, setIsTalking] = React.useState(false);
   const [isRecording, setIsRecording] = React.useState(false);
-  const [isPlaying, setIsPlaying] = React.useState(false);
-  const timeoutRef = useRef<any>();
+  const [playInfo, setPlayInfo] = React.useState<{ user: string } | null>(null);
+  const isPlaying = !!playInfo;
+  const maxRecordTimeout = useRef<any>();
+  const startTimeRef = useRef<number>(0);
 
   useEffect(() => {
     gunDB
@@ -47,27 +50,26 @@ export const PushToTalkButton: FC = () => {
       .map()
       .on((data: unknown, key: string) => {
         if (data) {
-          // console.log('audio data', data);
-
           const { audio, time, user } = data as {
             audio: any;
             time: number;
             user: string;
           };
+
           const isNew = Date.now() - time < 5000;
           const isRemote = user !== (gunDB as any)._.opt.pid;
 
           if (isRemote && isNew) {
             var snd = new Audio(audio);
-            snd.play();
             snd.addEventListener('play', () => {
               console.log('playing');
-              setIsPlaying(true);
+              setPlayInfo({ user });
             });
             snd.addEventListener('ended', () => {
               console.log('audio ended');
-              setIsPlaying(false);
+              setPlayInfo(null);
             });
+            snd.play();
           } else if (!isNew) {
             gunDB
               .get('audio')
@@ -130,24 +132,29 @@ export const PushToTalkButton: FC = () => {
   }, [isTalking]);
 
   const start = useDebouncedCallback(() => {
-    clearTimeout(timeoutRef.current);
+    clearTimeout(maxRecordTimeout.current);
 
     setIsTalking(true);
 
-    timeoutRef.current = setTimeout(() => {
+    maxRecordTimeout.current = setTimeout(() => {
+      startTimeRef.current = Date.now();
       setIsTalking(false);
     }, 30000);
   }, 250);
 
   const stop = useDebouncedCallback(() => {
-    clearTimeout(timeoutRef.current);
+    clearTimeout(maxRecordTimeout.current);
 
-    setIsTalking(false);
+    const stopTimeoutMs = Date.now() - startTimeRef.current < 1000 ? 1000 : 0;
+
+    setTimeout(() => {
+      setIsTalking(false);
+    }, stopTimeoutMs);
   }, 500);
 
   return (
     <Fragment>
-      <Modal show={isTalking} style={{ width: 100 }}>
+      <Modal show={isTalking} style={{ width: 200 }}>
         <ModalBody
           style={{
             display: 'flex',
@@ -158,11 +165,11 @@ export const PushToTalkButton: FC = () => {
           }}
         >
           <Spinner />
-          Recording...
+          Recording
         </ModalBody>
       </Modal>
 
-      <Modal show={isPlaying} style={{ width: 100 }}>
+      <Modal show={isPlaying} style={{ width: 200 }}>
         <ModalBody
           style={{
             display: 'flex',
@@ -172,8 +179,8 @@ export const PushToTalkButton: FC = () => {
             height: 100,
           }}
         >
-          <Spinner />
-          Playing...
+          <Speaker />
+          Message from {playInfo?.user}
         </ModalBody>
       </Modal>
 

@@ -2,12 +2,50 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Till Pager</title>
+    <meta
+      name="viewport"
+      content="width=device-width, height=device-height, initial-scale=1.0"
+    />
+    <link rel="apple-touch-icon" href="./public/logo192.png" />
+    <link rel="shortcut icon" href="./public/favicon.ico" />
+    <title>Tesco Till Pager POC</title>
+    <meta name="theme-color" content="#00539f" />
+    <link rel="manifest" href="./manifest.webmanifest" />
   </head>
 
   <body>
     <div id="root"></div>
+
     <script type="module" src="./index.tsx"></script>
+
+    <script>
+      const sw = 'service-worker.js'; // it is needed because parcel will not recognize this as a file and not precess in its manner
+
+      navigator.serviceWorker
+        .register(sw)
+        .then((registration) => {
+          registration.onupdatefound = () => {
+            const installingWorker = registration.installing;
+            if (installingWorker == null) {
+              return;
+            }
+            installingWorker.onstatechange = () => {
+              if (installingWorker.state === 'installed') {
+                if (navigator.serviceWorker.controller) {
+                  console.log(
+                    'New content is available and will be used when all ' +
+                      'tabs for this page are closed. See https://bit.ly/CRA-PWA.'
+                  );
+                } else {
+                  console.log('Content is cached for offline use.');
+                }
+              }
+            };
+          };
+        })
+        .catch((error) => {
+          console.error('Error during service worker registration:', error);
+        });
+    </script>
   </body>
 </html>

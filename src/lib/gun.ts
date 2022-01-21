@@ -11,8 +11,7 @@ localStorage.clear();
 
 // export const gunDB = Gun(['https://gunjs.herokuapp.com/gun']);
 export const gunDB = Gun([
-  'http://localhost:/8081',
-  'http://192.168.0.202:/8081',
+  'http://192.168.0.2:8090/gun',
   'https://gunjs.herokuapp.com/gun',
 ]);
 

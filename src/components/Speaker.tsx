@@ -15,9 +15,7 @@ const SVG = styled.svg`
     }
   }
 
-  // Animations
-
-  @keyframes {
+  @keyframes audioWaves {
     0% {
       opacity: 1;
       transform: scale(0) translateX(0);

@@ -9,27 +9,27 @@
   "start_url": "/notifications",
   "icons": [
     {
-      "src": "public/favicon.ico",
+      "src": "./public/favicon.ico",
       "type": "image/x-icon",
-      "sizes": "64x64 32x32 24x24 16x16"
+      "sizes": "16x16"
     },
     {
-      "src": "public/logo16.png",
+      "src": "./public/logo16.png",
       "type": "image/png",
       "sizes": "16x16"
     },
     {
-      "src": "public/logo32.png",
+      "src": "./public/logo32.png",
       "type": "image/png",
       "sizes": "32x32"
     },
     {
-      "src": "public/logo64.png",
+      "src": "./public/logo96.png",
       "type": "image/png",
-      "sizes": "64x64"
+      "sizes": "96x96"
     },
     {
-      "src": "public/logo192.png",
+      "src": "./public/logo192.png",
       "type": "image/png",
       "sizes": "192x192"
     }

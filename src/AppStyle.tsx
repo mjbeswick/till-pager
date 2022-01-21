@@ -6,6 +6,7 @@ const style = css`
   html {
     height: 100vh;
     width: 100vw;
+    height: -webkit-fill-available;
     overflow: hidden;
   }
 
@@ -21,6 +22,7 @@ const style = css`
     flex-direction: column;
     height: 100vh;
     width: 100vw;
+    min-height: 100%;
   }
 
   #root {

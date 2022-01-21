@@ -2,7 +2,7 @@
   "name": "Tesco Till Pager POC",
   "short_name": "Till Pager",
   "theme_color": "#00539f",
-  "background_color": "#00539f",
+  "background_color": "#ffffff",
   "display": "standalone",
   "orientation": "portrait",
   "scope": "/",

@@ -4,14 +4,20 @@ import { Color } from './constants';
 
 const style = css`
   html {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height: 100vh;
     width: 100vw;
     height: -webkit-fill-available;
     overflow: hidden;
+    background-color: ${Color.midGrey};
+    opacity: 1;
+    background: ${Color.midGrey};
   }
 
   body {
-    background-color: ${Color.blue};
+    background-color: ${Color.white};
     font-family: 'Roboto', sans-serif;
     font-size: 14px;
     color: ${Color.white};
@@ -22,7 +28,18 @@ const style = css`
     flex-direction: column;
     height: 100vh;
     width: 100vw;
-    min-height: 100%;
+    /* min-height: 100%; */
+  }
+  @media only screen and (min-width: 600px) {
+    body {
+      max-width: 600px;
+      max-height: 1000px;
+      height: 1250px;
+      margin: 0 auto;
+      box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.2);
+      /* border-radius: 1rem; */
+      overflow: hidden;
+    }
   }
 
   #root {

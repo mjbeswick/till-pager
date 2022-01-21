@@ -1,6 +1,6 @@
 export enum Color {
   body = '#333333',
-  red = '#ee1c2e',
+  red = '#EE1C2E',
   blue = '#00539f',
   yellow = '#FCD700',
   darkGrey = '#333333',
@@ -9,8 +9,11 @@ export enum Color {
   darkRed = '#C00000',
   orange = '#E85D00',
   lightGreen = '#44AB00',
+  errorBackground = '#FAEDEC',
   white = '#FFFFFF',
   black = '#000000',
-  midGrey = '#e5e5e5',
-  lightGrey = '#f6f6f6',
+  midGrey = '#E5E5E5',
+  lightGrey = '#F6F6F6',
+  lightYellow = '#FBF9E0',
+  lightRed = '#FBECE0',
 }

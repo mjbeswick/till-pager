@@ -24,7 +24,29 @@ export const NotificationTitle: Record<NotificationType, string> = {
   supervisor: 'Supervisor',
 };
 
-const NotificationContainer = styled.div<{ selected?: boolean }>`
+export type NotificationColor = 'default' | 'danger' | 'warning';
+
+interface GetColorProps {
+  selected?: boolean;
+  color?: NotificationColor;
+  disabled?: boolean;
+}
+
+const getColor = () => (props: GetColorProps) => {
+  const { selected = false, color = 'default' } = props;
+
+  if (selected) {
+    return Color.white;
+  }
+
+  return Color.body;
+};
+
+const NotificationContainer = styled.div<{
+  selected?: boolean;
+  color?: NotificationColor;
+  disabled?: boolean;
+}>`
   flex-direction: row;
   font-size: 1rem;
   display: flex;
@@ -33,20 +55,47 @@ const NotificationContainer = styled.div<{ selected?: boolean }>`
   /* margin: 0.25rem; */
   column-gap: 0.25rem;
   background: ${Color.white};
-  background: ${({ selected }) => (selected ? Color.blue : Color.white)};
-  color: ${({ selected }) => (selected ? Color.white : Color.body)};
-  cursor: pointer;
+  background: ${({ selected = false, disabled = false }) => {
+    return disabled ? Color.midGrey : selected ? Color.blue : Color.white;
+  }};
+  color: ${({ selected = false }) => (selected ? Color.white : Color.body)};
+  cursor: ${({ disabled }) => (disabled ? 'initial' : 'pointer')};
   overflow: hidden;
   border-bottom: 1px solid ${Color.midGrey};
+  user-select: none;
 `;
 
-const Lane = styled.div<{ selected?: boolean }>`
+const getLaneColor = () => (props: GetColorProps) => {
+  const { selected = false, color = 'default', disabled = false } = props;
+
+  if (selected) {
+    return 'rgba(255, 255, 255, 0.1)';
+  }
+
+  if (disabled) {
+    return 'rgba(0, 0, 0, 0.1)';
+  }
+
+  switch (color) {
+    case 'default':
+      return Color.lightBlue;
+    case 'danger':
+      return Color.lightRed;
+    case 'warning':
+      return Color.lightYellow;
+  }
+};
+
+const Lane = styled.div<{
+  selected?: boolean;
+  color: NotificationColor;
+  disabled?: boolean;
+}>`
   width: 3rem;
   text-align: center;
   padding: 0;
   line-height: 3rem;
-  background: ${({ selected }) =>
-    selected ? 'rgba(255, 255, 255, 0.1)' : Color.lightBlue};
+  background: ${getLaneColor()};
   border-radius: 100px;
   margin: 5px;
 `;
@@ -68,29 +117,56 @@ interface NotificationListItemProps {
   lane: number;
   type: keyof typeof NotificationTitle;
   time: number;
-  onSelect: (id: string | null) => void;
+  onClick: (id: string) => void;
   selected: boolean;
+  disabled?: boolean;
 }
 
-export const NotificationListItem: FC<NotificationListItemProps> = ({
+export const NotificationItem: FC<NotificationListItemProps> = ({
   id,
   lane,
   type,
   time,
-  onSelect,
+  onClick,
   selected,
+  disabled,
 }) => {
   const title = NotificationTitle[type];
+
+  let color: NotificationColor;
+
+  switch (type) {
+    case 'security':
+      color = 'danger';
+      break;
+    case 'supervisor':
+    case 'cleanup':
+      color = 'warning';
+      break;
+    default:
+      color = 'default';
+  }
 
   const toggle: React.MouseEventHandler<HTMLElement> = (el) => {
     el.preventDefault();
 
-    onSelect(selected ? null : id);
+    if (disabled) {
+      return;
+    }
+
+    onClick(id);
   };
 
   return (
-    <NotificationContainer onClick={toggle} selected={selected}>
-      <Lane selected={selected}>{lane}</Lane>
+    <NotificationContainer
+      onClick={toggle}
+      selected={selected}
+      color={color}
+      disabled={disabled}
+    >
+      <Lane selected={selected} color={color} disabled={disabled}>
+        {lane}
+      </Lane>
       <Title>{title}</Title>
       <Time>
         <TimePast time={time} />

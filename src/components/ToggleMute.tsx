@@ -3,17 +3,13 @@ import { VolumeMute } from '../icons/VolumeMute';
 import { VolumeUp } from '../icons/VolumeUp';
 
 interface ToggleMuteProps {
-  muteState?: boolean;
+  muted?: boolean;
 }
 
-export const ToggleMute: FC<ToggleMuteProps> = ({ muteState = true }) => {
-  const [mute, setMute] = useState(muteState);
-
-  // useEffect(() => {
-  //   const message = mute ? 'Mute on' : 'Mute off';
-  //   var utterance = new SpeechSynthesisUtterance(message);
-  //   speechSynthesis.speak(utterance);
-  // }, [mute]);
+export const ToggleMute: FC<ToggleMuteProps> = ({
+  muted: initialMuted = true,
+}) => {
+  const [mute, setMute] = useState(initialMuted);
 
   const toggle = () => {
     setMute(!mute);

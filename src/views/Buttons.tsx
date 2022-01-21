@@ -114,9 +114,6 @@ export const Buttons: FC = () => {
           })}
         </ButtonsContainer>
       </ViewBody>
-      <ViewFooter>
-        <PushToTalkButton />
-      </ViewFooter>
     </Fragment>
   );
 };

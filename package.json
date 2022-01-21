@@ -32,8 +32,8 @@
     "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-react": "^7.21.5",
     "parcel": "2.2.1",
-    "typescript": "^4.1.3",
-    "workbox-cli": "^6.4.2"
+    "parcel-plugin-workbox": "^0.2.0",
+    "typescript": "^4.1.3"
   },
   "dependencies": {
     "@emotion/react": "^11.7.1",
@@ -47,5 +47,14 @@
     "react-router-dom": "^6.2.1",
     "use-debounce": "^7.0.1",
     "zustand": "^3.6.9"
+  },
+  "workbox": {
+    "importScripts": [
+      "./worker.js"
+    ],
+    "globDirectory": "./dist",
+    "globPatterns": ["**/*.{css,html,gif,js,jpg,png,svg,webp}"],
+    "clientsClaim": true,
+    "skipWaiting": true
   }
 }

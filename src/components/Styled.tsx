@@ -9,6 +9,7 @@ export const ViewHeader = styled.div`
   display: flex;
   justify-content: space-between;
   border-bottom: 1px solid ${Color.midGrey};
+  background: ${Color.blue};
 `;
 
 export const ViewBody = styled.div<{ dark?: boolean }>`

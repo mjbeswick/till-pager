@@ -50,6 +50,7 @@ export const PushToTalkButton: FC = () => {
       .map()
       .on((data: unknown, key: string) => {
         if (data) {
+          console.log('audio received', key);
           const { audio, time, user } = data as {
             audio: any;
             time: number;
@@ -60,15 +61,19 @@ export const PushToTalkButton: FC = () => {
           const isRemote = user !== (gunDB as any)._.opt.pid;
 
           if (isRemote && isNew) {
+            console.log('playing remote audio');
             var snd = new Audio(audio);
-            snd.addEventListener('play', () => {
+
+            snd.onplay = () => {
               console.log('playing');
               setPlayInfo({ user });
-            });
-            snd.addEventListener('ended', () => {
+            };
+
+            snd.onended = () => {
               console.log('audio ended');
               setPlayInfo(null);
-            });
+            };
+
             snd.play();
           } else if (!isNew) {
             gunDB

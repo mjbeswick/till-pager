@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AppStyle } from './AppStyle';
 import { Login } from './views/Login';
 import { Notifications } from './views/Notifications';
@@ -12,6 +12,7 @@ export function App() {
     <AppStyle>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Navigate replace to="/home" />} />
           <Route path="/login" element={<Login />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/buttons" element={<Buttons />} />

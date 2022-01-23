@@ -3,7 +3,7 @@ import React, { FC } from 'react';
 import { Color } from '../constants';
 
 export const ViewHeader = styled.div`
-  font-size: 1rem;
+  font-size: 1.5rem;
   padding: 0.5rem 1rem;
   fill: ${Color.white};
   display: flex;

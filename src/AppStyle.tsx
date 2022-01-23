@@ -4,16 +4,10 @@ import { Color } from './constants';
 
 const style = css`
   html {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     height: 100vh;
     width: 100vw;
     height: -webkit-fill-available;
     overflow: hidden;
-    background-color: ${Color.midGrey};
-    opacity: 1;
-    background: ${Color.midGrey};
   }
 
   body {
@@ -28,9 +22,9 @@ const style = css`
     flex-direction: column;
     height: 100vh;
     width: 100vw;
-    /* min-height: 100%; */
-  }
-  @media only screen and (min-width: 600px) {
+    min-height: 100%;
+
+    @media only screen and (min-width: 600px) {
     body {
       max-width: 600px;
       max-height: 1000px;

@@ -8,7 +8,6 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { ToggleMute } from '../components/ToggleMute';
 import { NotificationTitle } from '../partials/NotificationListItem';
 import { Select } from '../components/Select';
 import { ViewBody, ViewFooter, ViewHeader } from '../components/Styled';
@@ -19,11 +18,13 @@ import { PushToTalkButton } from '../partials/PushToTalkButton';
 import { gunDB } from '../lib/gun';
 
 const ButtonsContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-gap: 1rem;
+  display: flex;
+  gap: 1rem;
   margin: 1rem;
   font-size: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 1rem;
 `;
 
 const LaneContainer = styled.div`
@@ -65,14 +66,14 @@ export const Buttons: FC = () => {
 
   const toggle = (lane: number, type: string, id?: string) => {
     if (id && active[id]) {
-      const node = gunDB.get('notifications').get(id);
-
-      (gunDB.get('notifications') as any).unset(node);
+      const node = gunDB.get(lane).get(id);
 
       gunDB
-        .get(lane)
+        .get('notifications')
         .get(id)
         .put(null as any);
+
+      node.put(null as any);
     } else {
       const id = nanoid();
 
@@ -83,7 +84,7 @@ export const Buttons: FC = () => {
         type,
       });
 
-      gunDB.get('notifications').set(node);
+      gunDB.get('notifications').get(id).put(node);
     }
   };
 
@@ -91,7 +92,6 @@ export const Buttons: FC = () => {
     <Fragment>
       <ViewHeader>
         <span>Buttons</span>
-        <ToggleMute />
       </ViewHeader>
       <ViewBody>
         <LaneContainer>
@@ -107,6 +107,7 @@ export const Buttons: FC = () => {
                 color="blue"
                 outline={!id}
                 onClick={() => toggle(lane, type, id)}
+                style={{ flexBasis: 300 }}
               >
                 {value}
               </Button>

@@ -1,19 +1,21 @@
-import React, { FC, useEffect, useState } from 'react';
+import styled from '@emotion/styled';
+import React, { FC, MouseEventHandler, useEffect, useState } from 'react';
 import { VolumeMute } from '../icons/VolumeMute';
 import { VolumeUp } from '../icons/VolumeUp';
 
 interface ToggleMuteProps {
-  muted?: boolean;
+  muted: boolean;
+  onClick: MouseEventHandler<HTMLDivElement>;
 }
 
-export const ToggleMute: FC<ToggleMuteProps> = ({
-  muted: initialMuted = true,
-}) => {
-  const [mute, setMute] = useState(initialMuted);
+const ToggleMuteContainer = styled.div`
+  cursor: pointer;
+`;
 
-  const toggle = () => {
-    setMute(!mute);
-  };
-
-  return mute ? <VolumeMute onClick={toggle} /> : <VolumeUp onClick={toggle} />;
+export const ToggleMute: FC<ToggleMuteProps> = ({ muted, onClick }) => {
+  return (
+    <ToggleMuteContainer onClick={onClick}>
+      {muted ? <VolumeMute /> : <VolumeUp />}
+    </ToggleMuteContainer>
+  );
 };

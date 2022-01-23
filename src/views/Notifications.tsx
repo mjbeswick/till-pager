@@ -30,7 +30,7 @@ export const Notifications: FC = () => {
   const [list, setList] = useState<{ [k: string]: Notification }>({});
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const spokenRef = useRef<string[]>([]);
-  const { isMuted } = useMute();
+  const { isMuted, toggleMute } = useMute();
 
   useEffect(() => {
     gunDB.get('notifications').map((data: unknown, id) => {
@@ -43,14 +43,12 @@ export const Notifications: FC = () => {
         list[id] = notification as Notification;
         setList({ ...list });
 
-        if (isNew && !spokenRef.current.includes(id)) {
+        if (isNew && !spokenRef.current.includes(id) && !isMuted) {
           spokenRef.current.push(id);
 
           const utterance = new SpeechSynthesisUtterance();
-
-          utterance.text = `Lane ${notification.lane}, ${
-            NotificationTitle[`${notification.type}`]
-          }`;
+          const title = NotificationTitle[notification.type];
+          utterance.text = `Lane ${notification.lane}, ${title}`;
 
           speechSynthesis.speak(utterance);
         }
@@ -67,7 +65,7 @@ export const Notifications: FC = () => {
         }
       }
     });
-  }, []);
+  }, [isMuted]);
 
   const [selectedModalItem, setSelectedModalItem] = useState(
     {} as Notification
@@ -122,7 +120,7 @@ export const Notifications: FC = () => {
       <ViewHeader>
         <span>Notifications</span>
         {selectedId}
-        <ToggleMute muted={isMuted} />
+        <ToggleMute muted={isMuted} onClick={() => toggleMute()} />
       </ViewHeader>
       <ViewBody dark>
         {Object.entries(list).map(([id, notification]) => {

@@ -15,11 +15,11 @@ export type NotificationType =
 
 export const NotificationTitle: Record<NotificationType, string> = {
   packing: 'Packing Assistance',
-  change: 'Change',
+  change: 'Change low',
   security: 'Security',
   price: 'Price Check',
-  product: 'Product Request',
-  bags: 'Bags',
+  product: 'Item requested',
+  bags: 'Bags low',
   cleanup: 'Cleanup',
   supervisor: 'Supervisor',
 };
@@ -48,7 +48,7 @@ const NotificationContainer = styled.div<{
   disabled?: boolean;
 }>`
   flex-direction: row;
-  font-size: 1rem;
+  font-size: 1.25rem;
   display: flex;
   flex-direction: row;
   align-items: center;

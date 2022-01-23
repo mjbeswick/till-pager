@@ -30,7 +30,7 @@ const TalkButton = styled.div<{ active: boolean }>`
   fill: ${({ active }) => (active ? Color.white : Color.darkGrey)};
   flex-grow: 1;
   padding: 1rem;
-  font-size: 1rem;
+  font-size: 1.5rem;
   cursor: pointer;
   user-select: none;
   z-index: 100;

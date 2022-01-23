@@ -16,4 +16,6 @@ export enum Color {
   lightGrey = '#F6F6F6',
   lightYellow = '#FBF9E0',
   lightRed = '#FBECE0',
+  inputBackground = '#F2F2F2',
+  inputBorder = '#CCCCCC',
 }

@@ -16,8 +16,8 @@ export const ModalContainer = styled.div<{ show?: boolean }>`
   flex-direction: column;
   justify-content: center;
   visibility: ${({ show = true }) => (show ? 'visible' : 'hidden')};
-  opacity: ${({ show = true }) => (show ? 1 : 0)};
-  transition: opacity 100ms ease-in-out;
+  opacity: ${({ show = true }) => (show ? 1 : 0.5)};
+  transition: opacity 100ms ease-in-out, visibility 100ms;
   z-index: 2;
   transition-delay: 100ms;
   row-gap: 1rem;
@@ -31,11 +31,11 @@ export const ModalOverlay = styled.div<{ show?: boolean }>`
   left: 0;
   width: 100%;
   height: 100%;
-  background: ${({ show = true }) =>
+  background-color: ${({ show = true }) =>
     show ? 'rgba(0, 0, 0, 0.5)' : 'transparent'};
   z-index: 1;
   visibility: ${({ show = true }) => (show ? 'visible' : 'hidden')};
-  transition: all 400ms ease-in-out;
+  transition: background-color 500ms ease-in-out, visibility 500ms;
   will-change: auto;
 `;
 
@@ -55,9 +55,10 @@ export const Modal: FC<ModalProps> = ({ show, children, style }) => {
 };
 
 export const ModalHeader = styled.div`
-  padding-bottom: 0.5rem;
-  font-size: 2rem;
-  text-align: center;
+  padding: 0.5rem;
+  font-size: 1.5rem;
+  text-align: left;
+  margin: 0 0.5rem 0.5rem;
 `;
 
 export const ModalFooter = styled.div`
@@ -74,4 +75,6 @@ export const ModalBody = styled.div`
   background: ${Color.white};
   color: ${Color.body};
   overflow-y: auto;
+  text-align: center;
+  line-height: 1.5rem;
 `;

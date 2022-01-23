@@ -22,7 +22,7 @@ export const NotificationActionModal: FC<NotificationActionModalProps> = ({
   show,
   notification,
 }) => {
-  const content = null;
+  const content = NotificationTitle[notification.type];
 
   return (
     <Modal show={!!show}>
